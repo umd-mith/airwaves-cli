@@ -7,6 +7,8 @@
 # environment variable:
 #
 #    export AIRTABLE_KEY="thisisnottherealkey"
+#    export IA_KEY="thisisnteither"
+#    export IA_SECRET="thisdefinitelynotasecret"
 #    ./upload.py naeb-b072-f01 naeb-b072-f01.zip
 #
 # You'll notice that this is just a kludgy wrapper around curl, which is already
@@ -27,10 +29,16 @@ import urllib2
 import subprocess
 
 AIRTABLE_KEY = os.environ.get('AIRTABLE_KEY')
+IA_KEY = os.environ.get('IA_KEY')
+IA_SECRET = os.environ.get('IA_SECRET')
 AIRTABLE_BASE = 'https://api.airtable.com/v0/appr7YXcZfPKUF4nI/'
 
 if not AIRTABLE_KEY:
     sys.exit("You forgot to set AIRTABLE_KEY in your environment")
+if not IA_KEY:
+    sys.exit("You forgot to set IA_KEY in your environment")
+if not IA_SECRET:
+    sys.exit("You forgot to set IA_SECRET in your environment")
 
 if len(sys.argv) != 3:
     sys.exit("usage: upload.py <id> <file.zip>")
@@ -75,6 +83,7 @@ r = get(table_name, params={'filterByFormula': '(FIND("%s",{ID}))' % id})
 'x-archive-meta-identifier:variety208-1957-11'
 'x-archive-meta-journal-title:Variety' \
 'x-archive-meta-file:variety208-1957-11_images.zip' \
+'authorization: LOW %s:%s' % (IA_KEY, IA_SECRET)
 
 # Folder
 
@@ -179,7 +188,6 @@ curl --location \
 --header 'x-archive-meta05-subject:Broadcasting' \
 --header 'x-archive-meta-language:eng' \
 --header 'x-archive-meta-mediatype:texts' \
---header 'authorization: LOW fTbpqdwH1hTXQZXE:P7r68yrN5JXVRynC' \
 --upload-file variety208-1957-11_images.zip \http://s3.us.archive.org/variety208-1957-11/variety208-1957-11_images.zip
 '''
 
