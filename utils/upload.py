@@ -68,55 +68,92 @@ else:
 
 r = get(table_name, params={'filterByFormula': '(FIND("%s",{ID}))' % id})
 
+'x-archive-auto-make-bucket:1' \
+'x-archive-meta-sponsor:National Endowment for the Humanities' \
+'x-archive-meta-coordinator:Maryland Institute for Technlogy in the Humanities'
+
+'x-archive-meta-identifier:variety208-1957-11'
+'x-archive-meta-journal-title:Variety' \
+'x-archive-meta-file:variety208-1957-11_images.zip' \
+
+# Folder
+
+# Title x-archive-meta-title
+
+# Series
+
+# Digitize?
+
+# Date
+
+# Creator(s)
+
+# Contributor(s)
+
+# Subject(s)
+
+# Coverage (Spatial)
+
+# Coverage (Temporal)
+
+# Type(s)
+
+# Format
+
+# Relation
+
+# Description
+
+# Publisher
+
+# Rights
+
+# Collection
+
+# Notes
+
+# Attachments
+
+
+# Item
+
+# Title Series
+
+# Date
+
+# Creator(s)
+
+# Contributor(s)
+
+# Subject(s)
+
+# Coverage (Spatial)
+
+# Coverage (Temporal)
+
+# Type(s)
+
+# Format
+
+# Relation
+
+# Description
+
+# Publisher
+
+# Rights
+
+# Collection
+
+# Notes
+
 # 
 
-'''
-'x-archive-meta-sponsor:Media History Digital Library' \
-'x-archive-meta-contributor:Media History Digital Library' \
-'x-archive-meta-coordinator:Media History Digital Library' \
-'x-archive-meta-journal-title:Variety' \
-'x-archive-meta-title:Variety (November 1957)' \
-'x-archive-meta-file:variety208-1957-11_images.zip' \
-'x-archive-meta-volume:208' \
-'x-archive-meta-year:1957' \
-'x-archive-meta-year-end:1957' \
-'x-archive-meta-date:1957' \
-'x-archive-meta-date-start:1957-11-06T23:23:59Z' \
-'x-archive-meta-date-end:1957-11-27T23:23:59Z' \
-'x-archive-meta-date-string:November 1957' \
-'x-archive-meta-page-count:335' \
-'x-archive-meta-publisher:New York, NY: Variety Publishing Company' \
-'x-archive-meta-source:Microfilm' \
-'x-archive-meta-creator:Variety' \
-'x-archive-meta-format:Periodicals' \
-'x-archive-meta-microfilm-contributor:Library of Congress National Audio Visual Conservation Center' \
-'x-archive-meta-collection:mediahistory' \
-'x-archive-meta01-sub-collection:Theatre and Vaudeville' \
-'x-archive-meta02-sub-collection:Hollywood Studio System' \
-'x-archive-meta03-sub-collection:Recorded Sound' \
-'x-archive-meta04-sub-collection:Broadcasting' \
-'x-archive-meta01-subject:Motion Pictures' \
-'x-archive-meta02-subject:Recorded Sound' \
-'x-archive-meta03-subject:Vaudeville' \
-'x-archive-meta04-subject:Theatre' \
-'x-archive-meta05-subject:Broadcasting' \
-'x-archive-meta-language:eng' \
-'x-archive-meta-mediatype:texts' \
-'authorization: LOW fTbpqdwH1hTXQZXE:P7r68yrN5JXVRynC' \
-'''
 
 # follow foreign keys
 
 '''
 curl --location \
---header 'x-archive-auto-make-bucket:1' \
---header 'x-archive-meta-identifier:variety208-1957-11' \
---header 'x-archive-meta-sponsor:Media History Digital Library' \
---header 'x-archive-meta-contributor:Media History Digital Library' \
---header 'x-archive-meta-coordinator:Media History Digital Library' \
---header 'x-archive-meta-journal-title:Variety' \
---header 'x-archive-meta-title:Variety (November 1957)' \
---header 'x-archive-meta-file:variety208-1957-11_images.zip' \
 --header 'x-archive-meta-volume:208' \
 --header 'x-archive-meta-year:1957' \
 --header 'x-archive-meta-year-end:1957' \
@@ -144,6 +181,131 @@ curl --location \
 --header 'x-archive-meta-mediatype:texts' \
 --header 'authorization: LOW fTbpqdwH1hTXQZXE:P7r68yrN5JXVRynC' \
 --upload-file variety208-1957-11_images.zip \http://s3.us.archive.org/variety208-1957-11/variety208-1957-11_images.zip
+'''
+
+'''
+  {
+    "contributor": [
+      "Wisconsin Historical Society",
+      "Cooperstein, Edwin",
+      "Underwood, Robert Jr.",
+      "Vogl, Dick",
+      "Harrison, Burt",
+      "Seidner, Fred J",
+      "Webster Jones, Lewis",
+      "Chase Smith, Margaret",
+      "White, Lynn Jr.",
+      "The Public Relations Board",
+      "Nelson, Don",
+      "Educational and Television Radio Center",
+      "Hill, Harold E.",
+      "Stanley, Ray",
+      "Crary, Ryland",
+      "WTIC (Hartford, CT)",
+      "Wisconsin Historical Society",
+      "Connecticut Council for the Advancement of Economic Education",
+      "Wass, Philmore B.",
+      "Trocchi, Doris R.",
+      "Carpenter, Russell F.",
+      "Rich, Carla",
+      "Goodman, Robert C.",
+      "Paulu, Burton",
+      "Easton, Alan G.",
+      "Skornia, Harry J.",
+      "US Army Infantry Center, Information Section",
+      "Steffensen, James L., Jr.",
+      "Newburn, Harry K.",
+      "Lyons, Roger",
+      "Michelfelder, Phyllis",
+      "Von Hallberg, Gene",
+      "Fostervoll, Kaare",
+      "Schweitzer, Albert",
+      "Latimer, Ira H.",
+      "Oldfield, Barney",
+      "American Women in Radio & Television, Inc.",
+      "Kerr, Edith",
+      "Renick, Helen Prokloff",
+      "Bennett, H.W.",
+      "National Education Program",
+      "Wheeldon, DelVina",
+      "Dale, Edgar",
+      "Kirkpatrick, Evron M.",
+      "Bardos, Arthur",
+      "Dahlgren, E.G. \"Ty\"",
+      "AB Maskin & Electro",
+      "Pellandini, Carlo",
+      "Spears, Richard L.",
+      "Eblen, Cliff",
+      "Thompson, William G., Jr.",
+      "Teven, Irwin K.",
+      "Heim, Paul K.",
+      "Laundauer, Ernest",
+      "Burt, Hardy",
+      "Rider, Richard",
+      "Iwasaki, Kohei",
+      "Fenz, Roland E."
+    ],
+    "coordinator": "Maryland Institute for Technology in the Humanities and University of Wisconsin-Madison Department of Communication Arts",
+    "creator": "National Association of Educational Broadcasters",
+    "date": "1958",
+    "date-end": "1958-12-31T23:23:59Z",
+    "date-start": "1958-01-01T23:23:59Z",
+    "date-string": "1958",
+    "description": "1958 Correspondence and documentation regarding program content submissions to the NAEB Network. Both NAEB Member and non-member representatives from various universities and other organizations correspondence with the NAEBs Bob Underwood (Network Manager) and Harold Hill (Associate Director).",
+    "file": "naeb-b072-f01_images.zip",
+    "format": "image/tiff",
+    "language": "eng",
+    "page-count": "289",
+    "publisher": "Wisconsin Historical Society",
+    "rights": "Wisconsin Historical Society",
+    "series": "Subject File",
+    "sponsor": "National Endowment for the Humanities",
+    "title": "NAEB Programs, Proposals, 1958",
+    "year": "1958",
+    "year-end": "1958",
+    "mediatype": "texts",
+    "relation": [
+      "References Science and Society",
+      "References Living America",
+      "References Barnard Forum (1958)",
+      "References Stretching Your Family Income",
+      "References Queen of Battle",
+      "References Language and Music",
+      "References Conversations Abroad",
+      "References Science and Secondary Education",
+      "References Peace and Atomic War",
+      "References Britain and the United Nations",
+      "References Let's Talk It Over",
+      "References What's Ahead for Higher Education?",
+      "References The Friendly Philosopher",
+      "References What Kind of America Do We Want?",
+      "References The Atom and You",
+      "References This Woman's World",
+      "References Yale Reports",
+      "References Living with Languages",
+      "References Britain Views the United Nations",
+      "References The American Adventure",
+      "References Neuvieme Symphonie de Beethoven",
+      "References A Time to Remember",
+      "References Latin America Views the United Nations",
+      "References Life and the World"
+    ],
+    "subject": [
+      "National Educational Radio Network (NERN)",
+      "Programming"
+    ],
+    "type": [
+      "Text",
+      "Correspondence"
+    ],
+    "publicdate": "2018-06-26 15:32:40",
+    "uploader": "erhoyt@gmail.com",
+    "addeddate": "2018-06-26 15:32:40",
+    "identifier-access": "http://archive.org/details/naeb-b072-f01",
+    "identifier-ark": "ark:/13960/t3vt8kn07",
+    "imagecount": "290",
+    "ocr": "ABBYY FineReader 11.0 (Extended OCR)"
+  }
 '''
 
 #print(json.dumps(get('Authorities (People & Entities)', 'rectCByrOPGPG7xAR'), indent=2))
