@@ -51,13 +51,47 @@ def get(table, path=None, params=None):
         url += '/' + path
     if params:
         url += '?' + urllib.urlencode(params)
+    print(url)
     req = urllib2.Request(url)
     req.add_header('Authorization', 'Bearer %s' % AIRTABLE_KEY)
     resp = urllib2.urlopen(req)
     data = json.load(resp)
-    if len(data['records']) != 1:
-        sys.exit('error: no such record %s %s %s' % (table, path, params))
-    return data['records'][0]
+    if 'records' in data:
+        if len(data['records']) != 1:
+            sys.exit('error: no such record %s %s %s' % (table, path, params))
+        else:
+            return data['records'][0]['fields']
+    else:
+        return data['fields']
+
+def add(rec, col_name, headers, header_name, link_table=None):
+    if col_name not in rec:
+        return
+    count = 0
+    for val in rec[col_name]:
+        if link_table:
+            linked_rec = get(link_table, val)
+            val = linked_rec['Name']
+        if count == 0:
+            h = 'x-archive-meta-%s' % header_name
+        else:
+            h = 'x-archive-meta%02i-%s' % (count, header_name)
+        headers[h] = val
+        count += 1
+
+def curl(id, zip_file, headers):
+    cmd = [
+        'curl',
+        '--location',
+        '--upload-file', zip_file, 
+    ]
+    for k in sorted(headers.keys()):
+        cmd.append(k)
+        cmd.append(headers[k])
+
+    cmd.append('http://s3.us.archive.org/%s/%s' % (id, zip_file))
+    return cmd
+
 
 # figure out if we are working with a folder or an item
 
@@ -72,249 +106,56 @@ if item_num:
 else:
     table_name = 'Contents by Folder with Metadata' 
 
-# get the metadata for the thing
+rec = get(table_name, params={'filterByFormula': '(FIND("%s",{ID}))' % id})
 
-r = get(table_name, params={'filterByFormula': '(FIND("%s",{ID}))' % id})
+headers = {
+    'authorization': 'LOW %s:%s' % (IA_KEY, IA_SECRET),
+    'x-archive-meta-file': zip_file,
+    'x-archive-auto-make-bucket': '1',
+    'x-archive-meta-sponsor': 'National Endowment for the Humanities',
+    'x-archive-meta-coordinator': 'Maryland Institute for Technlogy in the Humanities',
+    'x-archive-meta-title': rec['Title'],
+    'x-archive-meta-series': rec['Series'],
+    'x-archive-meta-rights': rec['Rights'],
+    'x-archive-meta-description': rec['Description'],
+    'x-archive-meta-box': box_num,
+    'x-archive-meta-folder': folder_num,
+    #'x-archive-meta-identifier': 'variety208-1957-11',
+    #'x-archive-meta-journal-title': 'Variety',
+}
 
-'x-archive-auto-make-bucket:1' \
-'x-archive-meta-sponsor:National Endowment for the Humanities' \
-'x-archive-meta-coordinator:Maryland Institute for Technlogy in the Humanities'
+if item_num:
+    headers['x-archive-meta-item'] = item_num
 
-'x-archive-meta-identifier:variety208-1957-11'
-'x-archive-meta-journal-title:Variety' \
-'x-archive-meta-file:variety208-1957-11_images.zip' \
-'authorization: LOW %s:%s' % (IA_KEY, IA_SECRET)
+add(rec, 'Publisher', headers, 'publisher', 'Authorities (People & Entities)')
+add(rec, 'Creator(s)', headers, 'creator', 'Authorities (People & Entities)')
+add(rec, 'Contributor(s)', headers, 'contributor', 'Authorities (People & Entities)')
+add(rec, 'Subject(s)', headers, 'subject', 'Authorities (Subjects)')
+add(rec, 'Type(s)', headers, 'type')
 
-# Folder
+if not item_num:
+    add(rec, 'Relation(s)', headers, 'relation')
 
-# Title x-archive-meta-title
-
-# Series
-
-# Digitize?
-
-# Date
-
-# Creator(s)
-
-# Contributor(s)
-
-# Subject(s)
-
-# Coverage (Spatial)
-
-# Coverage (Temporal)
-
-# Type(s)
-
-# Format
-
-# Relation
-
-# Description
-
-# Publisher
-
-# Rights
-
-# Collection
-
-# Notes
-
-# Attachments
-
-
-# Item
-
-# Title Series
-
-# Date
-
-# Creator(s)
-
-# Contributor(s)
-
-# Subject(s)
-
-# Coverage (Spatial)
-
-# Coverage (Temporal)
-
-# Type(s)
-
-# Format
-
-# Relation
-
-# Description
-
-# Publisher
-
-# Rights
-
-# Collection
-
-# Notes
-
-# 
-
-
-# follow foreign keys
+# Date 
 
 '''
-curl --location \
---header 'x-archive-meta-volume:208' \
+date = rec['Date']
+if re.match('\d\d\d\d-\d\d\d\d', date):
+    date_string = date
+    year, year_end = date.split('-')
 --header 'x-archive-meta-year:1957' \
 --header 'x-archive-meta-year-end:1957' \
 --header 'x-archive-meta-date:1957' \
 --header 'x-archive-meta-date-start:1957-11-06T23:23:59Z' \
 --header 'x-archive-meta-date-end:1957-11-27T23:23:59Z' \
 --header 'x-archive-meta-date-string:November 1957' \
---header 'x-archive-meta-page-count:335' \
---header 'x-archive-meta-publisher:New York, NY: Variety Publishing Company' \
---header 'x-archive-meta-source:Microfilm' \
---header 'x-archive-meta-creator:Variety' \
---header 'x-archive-meta-format:Periodicals' \
---header 'x-archive-meta-microfilm-contributor:Library of Congress National Audio Visual Conservation Center' \
---header 'x-archive-meta-collection:mediahistory' \
---header 'x-archive-meta01-sub-collection:Theatre and Vaudeville' \
---header 'x-archive-meta02-sub-collection:Hollywood Studio System' \
---header 'x-archive-meta03-sub-collection:Recorded Sound' \
---header 'x-archive-meta04-sub-collection:Broadcasting' \
---header 'x-archive-meta01-subject:Motion Pictures' \
---header 'x-archive-meta02-subject:Recorded Sound' \
---header 'x-archive-meta03-subject:Vaudeville' \
---header 'x-archive-meta04-subject:Theatre' \
---header 'x-archive-meta05-subject:Broadcasting' \
---header 'x-archive-meta-language:eng' \
---header 'x-archive-meta-mediatype:texts' \
---upload-file variety208-1957-11_images.zip \http://s3.us.archive.org/variety208-1957-11/variety208-1957-11_images.zip
 '''
 
-'''
-  {
-    "contributor": [
-      "Wisconsin Historical Society",
-      "Cooperstein, Edwin",
-      "Underwood, Robert Jr.",
-      "Vogl, Dick",
-      "Harrison, Burt",
-      "Seidner, Fred J",
-      "Webster Jones, Lewis",
-      "Chase Smith, Margaret",
-      "White, Lynn Jr.",
-      "The Public Relations Board",
-      "Nelson, Don",
-      "Educational and Television Radio Center",
-      "Hill, Harold E.",
-      "Stanley, Ray",
-      "Crary, Ryland",
-      "WTIC (Hartford, CT)",
-      "Wisconsin Historical Society",
-      "Connecticut Council for the Advancement of Economic Education",
-      "Wass, Philmore B.",
-      "Trocchi, Doris R.",
-      "Carpenter, Russell F.",
-      "Rich, Carla",
-      "Goodman, Robert C.",
-      "Paulu, Burton",
-      "Easton, Alan G.",
-      "Skornia, Harry J.",
-      "US Army Infantry Center, Information Section",
-      "Steffensen, James L., Jr.",
-      "Newburn, Harry K.",
-      "Lyons, Roger",
-      "Michelfelder, Phyllis",
-      "Von Hallberg, Gene",
-      "Fostervoll, Kaare",
-      "Schweitzer, Albert",
-      "Latimer, Ira H.",
-      "Oldfield, Barney",
-      "American Women in Radio & Television, Inc.",
-      "Kerr, Edith",
-      "Renick, Helen Prokloff",
-      "Bennett, H.W.",
-      "National Education Program",
-      "Wheeldon, DelVina",
-      "Dale, Edgar",
-      "Kirkpatrick, Evron M.",
-      "Bardos, Arthur",
-      "Dahlgren, E.G. \"Ty\"",
-      "AB Maskin & Electro",
-      "Pellandini, Carlo",
-      "Spears, Richard L.",
-      "Eblen, Cliff",
-      "Thompson, William G., Jr.",
-      "Teven, Irwin K.",
-      "Heim, Paul K.",
-      "Laundauer, Ernest",
-      "Burt, Hardy",
-      "Rider, Richard",
-      "Iwasaki, Kohei",
-      "Fenz, Roland E."
-    ],
-    "coordinator": "Maryland Institute for Technology in the Humanities and University of Wisconsin-Madison Department of Communication Arts",
-    "creator": "National Association of Educational Broadcasters",
-    "date": "1958",
-    "date-end": "1958-12-31T23:23:59Z",
-    "date-start": "1958-01-01T23:23:59Z",
-    "date-string": "1958",
-    "description": "1958 Correspondence and documentation regarding program content submissions to the NAEB Network. Both NAEB Member and non-member representatives from various universities and other organizations correspondence with the NAEBs Bob Underwood (Network Manager) and Harold Hill (Associate Director).",
-    "file": "naeb-b072-f01_images.zip",
-    "format": "image/tiff",
-    "language": "eng",
-    "page-count": "289",
-    "publisher": "Wisconsin Historical Society",
-    "rights": "Wisconsin Historical Society",
-    "series": "Subject File",
-    "sponsor": "National Endowment for the Humanities",
-    "title": "NAEB Programs, Proposals, 1958",
-    "year": "1958",
-    "year-end": "1958",
-    "mediatype": "texts",
-    "relation": [
-      "References Science and Society",
-      "References Living America",
-      "References Barnard Forum (1958)",
-      "References Stretching Your Family Income",
-      "References Queen of Battle",
-      "References Language and Music",
-      "References Conversations Abroad",
-      "References Science and Secondary Education",
-      "References Peace and Atomic War",
-      "References Britain and the United Nations",
-      "References Let's Talk It Over",
-      "References What's Ahead for Higher Education?",
-      "References The Friendly Philosopher",
-      "References What Kind of America Do We Want?",
-      "References The Atom and You",
-      "References This Woman's World",
-      "References Yale Reports",
-      "References Living with Languages",
-      "References Britain Views the United Nations",
-      "References The American Adventure",
-      "References Neuvieme Symphonie de Beethoven",
-      "References A Time to Remember",
-      "References Latin America Views the United Nations",
-      "References Life and the World"
-    ],
-    "subject": [
-      "National Educational Radio Network (NERN)",
-      "Programming"
-    ],
-    "type": [
-      "Text",
-      "Correspondence"
-    ],
-    "publicdate": "2018-06-26 15:32:40",
-    "uploader": "erhoyt@gmail.com",
-    "addeddate": "2018-06-26 15:32:40",
-    "identifier-access": "http://archive.org/details/naeb-b072-f01",
-    "identifier-ark": "ark:/13960/t3vt8kn07",
-    "imagecount": "290",
-    "ocr": "ABBYY FineReader 11.0 (Extended OCR)"
-  }
-'''
+print(json.dumps(curl(id, zip_file, headers), indent=2))
 
-#print(json.dumps(get('Authorities (People & Entities)', 'rectCByrOPGPG7xAR'), indent=2))
-#print(json.dumps(get('Contents by Item with Metadata', params={'filterByFormula': '(FIND("%s",{ID}))' % id}), indent=2))
+
+# Coverage (Spatial)
+
+# Coverage (Temporal)
+
+# Collection

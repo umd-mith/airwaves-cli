@@ -1,45 +1,59 @@
 {
-  "createdTime": "2018-06-19T02:02:41.000Z", 
+  "createdTime": "2018-06-15T21:30:19.000Z", 
   "fields": {
-    "Box": "110", 
-    "Series": "Publications and Newsletter Files", 
-    "Title (Folder Name)": "Newsletters, Newsletter (general membership), 1930-1942", 
-    "Digitization/Preservation Progress Tracking by Folder": [
-      "recu0OUDMcaxzuZxj"
+    "Box": "034", 
+    "Publisher": [
+      "recValzJDmNs2ZkiV"
     ], 
-    "Folder": "04", 
+    "Creator(s)": [
+      "recjljEZK3gsjxmub"
+    ], 
+    "Format": "image/tiff", 
+    "Title": "Committees Programming Practices, 1968-1969", 
+    "Series": "Subject File", 
+    "Contributor(s)": [
+      "recDSVF1eZQkOUP5C", 
+      "recSZRDUM6wZ5AS25", 
+      "recZbwrPguNeIvOcv", 
+      "reckRZndbCNXlvpQh", 
+      "reckNMz6Vp8DCSWq9", 
+      "recnQBfy2qz9hIQa1", 
+      "recCLwrxbFkHBDX5Y", 
+      "rec6nMiDEoi8LkJiQ", 
+      "recE3K6oHIn2mztnv", 
+      "rec7c5qe3oSlmcMyO", 
+      "recJDUCPfccdVAB42", 
+      "recV8oSVXXBXTEhKz", 
+      "recwSUcXSHKbCiNWt", 
+      "reckTezloYf8l3KhV", 
+      "recerudzJruAeWVB9", 
+      "recKucoTIXEY3XOPu"
+    ], 
+    "Digitization/Preservation Progress Tracking by Folder": [
+      "recBBBTpHvuKSVtqb"
+    ], 
+    "Description": "1968 and 1969 correspondence and survey report about member station programming of nationally distributed and/or network materials dealing with racial topics.", 
+    "Relation": [
+      "References NET Festival"
+    ], 
+    "Collection": "National Association of Educational Broadcasters Records, 1925-1977 (bulk 1950-1970)", 
+    "Type(s)": [
+      "Text", 
+      "Correspondence", 
+      "Report"
+    ], 
+    "Date": "1968-1969", 
+    "Rights": "Wisconsin Historical Society", 
+    "Folder": "01", 
     "Digitize?": "Yes", 
-    "ID": "naeb-b110-f04", 
-    "Contents by Item with Metadata copy": [
-      "recUrWAlithdTFHQg", 
-      "recL4QWpGtTLPOqaE", 
-      "recKIYfxdeYZ2eaJ6", 
-      "recwwruNXdS7skKbk", 
-      "recANGxxZhZOgbwFB", 
-      "reczFTGKHuLTCszBY", 
-      "recpmPS5MCsagKfAD", 
-      "recPJj8MIlFMQUenX", 
-      "recScMIu1PmlzigOO", 
-      "recL64qRrJOIw3aaP", 
-      "recQ8QepTXxskFMbu", 
-      "recjIJ9rSCwDfBTdt", 
-      "recPkJUv8SQRGrhgq", 
-      "recAYuFJedXT3bA6s", 
-      "recdeiNW9b4pLmWsK", 
-      "recvbLwSKZdrm5UmU", 
-      "recMUk7LYkvTyaGAo", 
-      "recmYjYUiew1l3vBy", 
-      "recFEde6Akt7g9MyA", 
-      "reci0mkkMS4hTaK0b", 
-      "recLJvGQ4rbyxvxCU", 
-      "recjg5hsaKZGPEFaQ", 
-      "recxPhk8vIH7vTG5Y", 
-      "rec1DReG3FbnbZ7VC", 
-      "reclgUDZjKlZTj2OJ", 
-      "recjRJVXLr0rCyr78", 
-      "reciYM2XmRNqpIWk6", 
-      "recfuxBoRUfhy3RYz"
-    ]
+    "Subject(s)": [
+      "recWiRSqD1oTnM45b", 
+      "recDijpk1Dh1b0rBH", 
+      "recQZlu4wdadXKP6f", 
+      "recMVud8qMXQ3LcdY"
+    ], 
+    "ID": "naeb-b034-f01", 
+    "Coverage (Temporal)": "1968-1969"
   }, 
-  "id": "recW7WWyKAFGje1K4"
+  "id": "recknodUATSOL8pGh"
 }
