@@ -29,16 +29,16 @@ import urllib2
 import subprocess
 
 AIRTABLE_KEY = os.environ.get('AIRTABLE_KEY')
-IA_KEY = os.environ.get('IA_KEY')
-IA_SECRET = os.environ.get('IA_SECRET')
+IA_ACCESS_KEY = os.environ.get('IA_ACCESS_KEY')
+IA_SECRET_KEY = os.environ.get('IA_SECRET_KEY')
 AIRTABLE_BASE = 'https://api.airtable.com/v0/appr7YXcZfPKUF4nI/'
 
 if not AIRTABLE_KEY:
     sys.exit("You forgot to set AIRTABLE_KEY in your environment")
-if not IA_KEY:
-    sys.exit("You forgot to set IA_KEY in your environment")
-if not IA_SECRET:
-    sys.exit("You forgot to set IA_SECRET in your environment")
+if not IA_ACCESS_KEY:
+    sys.exit("You forgot to set IA_ACCESS_KEY in your environment")
+if not IA_SECRET_KEY:
+    sys.exit("You forgot to set IA_SECRET_KEY in your environment")
 
 if len(sys.argv) != 3:
     sys.exit("usage: upload.py <id> <file.zip>")
@@ -51,7 +51,6 @@ def get(table, path=None, params=None):
         url += '/' + path
     if params:
         url += '?' + urllib.urlencode(params)
-    print(url)
     req = urllib2.Request(url)
     req.add_header('Authorization', 'Bearer %s' % AIRTABLE_KEY)
     resp = urllib2.urlopen(req)
@@ -69,15 +68,12 @@ def add(rec, col_name, headers, header_name, link_table=None):
         return
     count = 0
     for val in rec[col_name]:
+        count += 1
         if link_table:
             linked_rec = get(link_table, val)
             val = linked_rec['Name']
-        if count == 0:
-            h = 'x-archive-meta-%s' % header_name
-        else:
-            h = 'x-archive-meta%02i-%s' % (count, header_name)
+        h = 'x-archive-meta%02i-%s' % (count, header_name)
         headers[h] = val
-        count += 1
 
 def curl(id, zip_file, headers):
     cmd = [
@@ -86,8 +82,8 @@ def curl(id, zip_file, headers):
         '--upload-file', zip_file, 
     ]
     for k in sorted(headers.keys()):
-        cmd.append(k)
-        cmd.append(headers[k])
+        cmd.append('--header')
+        cmd.append("%s:%s" % (k, headers[k]))
 
     cmd.append('http://s3.us.archive.org/%s/%s' % (id, zip_file))
     return cmd
@@ -109,32 +105,50 @@ else:
 rec = get(table_name, params={'filterByFormula': '(FIND("%s",{ID}))' % id})
 
 headers = {
-    'authorization': 'LOW %s:%s' % (IA_KEY, IA_SECRET),
-    'x-archive-meta-file': zip_file,
+
+    # boilerplate headers
+
     'x-archive-auto-make-bucket': '1',
     'x-archive-meta-sponsor': 'National Endowment for the Humanities',
     'x-archive-meta-coordinator': 'Maryland Institute for Technlogy in the Humanities',
-    'x-archive-meta-title': rec['Title'],
-    'x-archive-meta-series': rec['Series'],
-    'x-archive-meta-rights': rec['Rights'],
-    'x-archive-meta-description': rec['Description'],
-    'x-archive-meta-box': box_num,
+    'x-archive-meta-format': 'image/tiff',
+    #'x-archive-meta-collection': 'mediahistory',
+    'x-archive-meta-collection': 'opensource_movies',
+    'x-archive-meta-language': 'eng',
+    #'x-archive-meta-mediatype': 'texts',
+    'x-archive-meta-mediatype': 'movies',
+
+    # dynamic headers
+
+    'authorization': 'LOW %s:%s' % (IA_ACCESS_KEY, IA_SECRET_KEY),
+    'x-archive-meta-file': zip_file,
+    'x-archive-meta-identifier': id,
+    'x-archive-meta-title': rec.get('Title', ''),
+    'x-archive-meta-series': rec.get('Series', ''),
+    'x-archive-meta-rights': rec.get('Rights', ''),
+    'x-archive-meta-description': rec.get('Description', ''),
     'x-archive-meta-folder': folder_num,
-    #'x-archive-meta-identifier': 'variety208-1957-11',
+    'x-archive-meta-box': box_num,
+
+    # these were from the example curl command but not sure how to map
     #'x-archive-meta-journal-title': 'Variety',
+    #'x-archive-meta-page-count': '54'
 }
+
+# item and folder specific metadata
 
 if item_num:
     headers['x-archive-meta-item'] = item_num
+else:
+    add(rec, 'Relation', headers, 'relation')
+
+# metadata that can take multiple values
 
 add(rec, 'Publisher', headers, 'publisher', 'Authorities (People & Entities)')
 add(rec, 'Creator(s)', headers, 'creator', 'Authorities (People & Entities)')
 add(rec, 'Contributor(s)', headers, 'contributor', 'Authorities (People & Entities)')
 add(rec, 'Subject(s)', headers, 'subject', 'Authorities (Subjects)')
 add(rec, 'Type(s)', headers, 'type')
-
-if not item_num:
-    add(rec, 'Relation(s)', headers, 'relation')
 
 # Date 
 
@@ -143,19 +157,25 @@ date = rec['Date']
 if re.match('\d\d\d\d-\d\d\d\d', date):
     date_string = date
     year, year_end = date.split('-')
+    
 --header 'x-archive-meta-year:1957' \
 --header 'x-archive-meta-year-end:1957' \
 --header 'x-archive-meta-date:1957' \
 --header 'x-archive-meta-date-start:1957-11-06T23:23:59Z' \
 --header 'x-archive-meta-date-end:1957-11-27T23:23:59Z' \
 --header 'x-archive-meta-date-string:November 1957' \
+
+--header 'x-archive-meta-year:1952' \
+--header 'x-archive-meta-year-end:1953' \
+--header 'x-archive-meta-date:1952-1953' \
+--header 'x-archive-meta-date-start:1952-01-01T23:23:59Z' \
+--header 'x-archive-meta-date-end:1953-12-31T23:23:59Z' \
+--header 'x-archive-meta-date-string:1952-1953' 
 '''
 
 print(json.dumps(curl(id, zip_file, headers), indent=2))
-
 
 # Coverage (Spatial)
 
 # Coverage (Temporal)
 
-# Collection
