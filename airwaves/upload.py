@@ -22,19 +22,19 @@ import json
 import logging
 import optparse
 import requests
+import ConfigParser
 
 AIRTABLE_BASE = 'https://api.airtable.com/v0/appr7YXcZfPKUF4nI/'
 
 
 def main():
     env = os.environ.get
-    parser = optparse.OptionParser('upload.py <id> <zip_file>')
-    parser.add_option('--airtable-key', default=env('AIRTABLE_KEY'))
-    parser.add_option('--ia-access-key', default=env('IA_ACCESS_KEY'))
-    parser.add_option('--ia-secret-key', default=env('IA_SECRET_KEY'))
+    parser = optparse.OptionParser('airwaves <id> <zip_file>')
     parser.add_option('--verbose', '-v', action='store_true')
-    parser.add_option('--log', default='upload.log')
+    parser.add_option('--log', default='airwaves.log')
     opts, args = parser.parse_args()
+
+    config = get_config()
 
     # set up logging
     logging.basicConfig(
@@ -42,14 +42,6 @@ def main():
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s'
     )
-
-    # check we have API keys
-    if not opts.airtable_key:
-        sys.exit("You forgot to set the airtable key")
-    if not opts.ia_access_key:
-        sys.exit("You forgot to set ia access key")
-    if not opts.ia_secret_key:
-        sys.exit("You forgot to set ia secret key")
 
     if len(args) != 2:
         parser.error('You must supply an folder/item id and a zip file path')
@@ -66,13 +58,13 @@ def main():
 
     # fetch the metadata from airtable
     rec = get_record(
-        opts.airtable_key,
+        config['airtable-key'],
         table_name, 
         params={'filterByFormula': '(FIND("%s",{ID}))' % id}
     )
 
     # use the metadata to generate HTTP headers to POST to archive.org
-    headers = get_headers(id, zip_file, rec, opts)
+    headers = get_headers(id, zip_file, rec, config)
 
     url = upload(id, zip_file, headers)
     if url:
@@ -92,11 +84,12 @@ def get_record(key, table, path=None, params=None):
         else:
             return data['records'][0]['fields']
     else:
+        print(json.dumps(data, indent=2))
         return data['fields']
 
 
-def get_headers(id, zip_file, rec, opts):
-    airtable_key = opts.airtable_key
+def get_headers(id, zip_file, rec, config):
+    airtable_key = config['airtable-key']
     headers = {
         # boilerplate headers
         'x-archive-auto-make-bucket': '1',
@@ -108,7 +101,7 @@ def get_headers(id, zip_file, rec, opts):
         'x-archive-meta-mediatype': 'texts',
 
         # dynamic headers
-        'Authorization': 'LOW %s:%s' % (opts.ia_access_key, opts.ia_secret_key),
+        'Authorization': 'LOW %(ia-access-key)s:%(ia-secret-key)s' % config,
         'x-archive-meta-file': zip_file,
         'x-archive-meta-identifier': id,
         'x-archive-meta-title': rec.get('Title', ''),
@@ -132,7 +125,7 @@ def get_headers(id, zip_file, rec, opts):
             sys.exit('item %s is not linked to a folder' % id)
         folder_id = rec['Box and Folder #'][0]
         # need to get the linked folder to determine the box and folder
-        folder = get_record(opts.airtable_key, 'Contents by Folder with Metadata', folder_id)
+        folder = get_record(airtable_key, 'Contents by Folder with Metadata', folder_id)
         headers['x-archive-meta-box'] = folder.get('Box', '')
         headers['x-archive-meta-folder'] = folder.get('Folder', '')
     else:
@@ -208,6 +201,31 @@ def upload(id, zip_file, headers):
         logging.error('upload failed: %s', e)
         return None
 
+
+def get_config():
+    config_file = os.path.join(os.path.expanduser("~"), ".airwaves")
+    config = ConfigParser.ConfigParser()
+
+    if os.path.isfile(config_file):
+        config.read(config_file)
+        airtable_key = config.get('main', 'airtable-key')
+        ia_access_key = config.get('main', 'ia-access-key')
+        ia_secret_key = config.get('main', 'ia-secret-key')
+    else:
+        airtable_key = raw_input('airtable-key: ')
+        ia_access_key = raw_input('ia-access-key: ')
+        ia_secret_key = raw_input('ia-secret-key: ')
+        config.add_section('main')
+        config.set('main', 'airtable-key', airtable_key)
+        config.set('main', 'ia-access-key', ia_access_key)
+        config.set('main', 'ia-secret-key', ia_secret_key)
+        config.write(open(config_file, 'w'))
+
+    return {
+        'airtable-key': airtable_key,
+        'ia-access-key': ia_access_key,
+        'ia-secret-key': ia_secret_key
+    }
 
 if __name__ == "__main__":
     main()
