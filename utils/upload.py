@@ -23,10 +23,6 @@ import logging
 import optparse
 import requests
 
-# These keys are needed for talking to Airtable and Internet Archive.
-# They should be set in your environment. If they aren't there then 
-# we need to stop immediately.
-
 AIRTABLE_BASE = 'https://api.airtable.com/v0/appr7YXcZfPKUF4nI/'
 
 
