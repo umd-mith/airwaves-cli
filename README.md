@@ -4,7 +4,7 @@ Download the latest [release], unzip and then:
 
     sudo python setup.py install
 
-Then you can 
+Then you can:
 
     airwaves naeb-b110-f04-03 naeb-b110-f04-03.zip
 
