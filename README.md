@@ -1,4 +1,4 @@
-[Unlocking the Airwaves] stuff.
+A utility for working with the [Unlocking the Airwaves] project.
 
 Download the latest [release], unzip and then:
 
