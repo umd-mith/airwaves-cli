@@ -37,7 +37,11 @@ def main():
     opts, args = parser.parse_args()
 
     # set up logging
-    logging.basicConfig(filename=opts.log, level=logging.INFO)
+    logging.basicConfig(
+        filename=opts.log,
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
 
     # check we have API keys
     if not opts.airtable_key:
@@ -192,7 +196,9 @@ def upload(id, zip_file, headers):
         with open(zip_file, 'rb') as fh:
             resp = requests.put(url, headers=headers, data=fh)
             if resp.status_code == 200:
-                return 'http://s3.us.archive.org/%s' % id
+                item_url = 'http://s3.us.archive.org/%s' % id
+                logging.info('created %s', item_url)
+                return item_url
             else:
                 logging.error('upload failed: %s', resp.status_code)
                 logging.info('response headers: %s', resp.headers)
