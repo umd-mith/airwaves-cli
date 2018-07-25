@@ -1,1 +1,6 @@
+*.log
 env.sh
+*.pyc
+Pipfile*
+airwaves.egg-info
+.pytest_cache/

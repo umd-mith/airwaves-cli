@@ -20,6 +20,7 @@ import re
 import sys
 import json
 import logging
+import datetime
 import optparse
 import requests
 import ConfigParser
@@ -84,7 +85,6 @@ def get_record(key, table, path=None, params=None):
         else:
             return data['records'][0]['fields']
     else:
-        print(json.dumps(data, indent=2))
         return data['fields']
 
 
@@ -109,12 +109,9 @@ def get_headers(id, zip_file, rec, config):
         'x-archive-meta-rights': rec.get('Rights', ''),
         'x-archive-meta-description': rec.get('Description', ''),
 
-        # XXX: these were from the example curl command but not sure how to map
-        #'x-archive-meta-journal-title': 'Variety',
-        #'x-archive-meta-page-count': '54'
-
         # XXX: these are in the airtable but i'm not sure what ia metadata
         # Coverage (Spatial)
+
         # Coverage (Temporal)
     }
 
@@ -126,11 +123,11 @@ def get_headers(id, zip_file, rec, config):
         folder_id = rec['Box and Folder #'][0]
         # need to get the linked folder to determine the box and folder
         folder = get_record(airtable_key, 'Contents by Folder with Metadata', folder_id)
-        headers['x-archive-meta-box'] = folder.get('Box', '')
-        headers['x-archive-meta-folder'] = folder.get('Folder', '')
+        headers['x-archive-meta-box'] = int(folder['Box'])
+        headers['x-archive-meta-folder'] = int(folder['Folder'])
     else:
-        headers['x-archive-meta-box'] = rec.get('Box', '')
-        headers['x-archive-meta-folder'] = rec.get('Folder', '')
+        headers['x-archive-meta-box'] = int(rec['Box'])
+        headers['x-archive-meta-folder'] = int(rec['Folder'])
 
     # metadata that can take multiple values
     add_multi(airtable_key, rec, 'Publisher', headers, 'publisher', 'Authorities (People & Entities)')
@@ -138,33 +135,14 @@ def get_headers(id, zip_file, rec, config):
     add_multi(airtable_key, rec, 'Contributor(s)', headers, 'contributor', 'Authorities (People & Entities)')
     add_multi(airtable_key, rec, 'Subject(s)', headers, 'subject', 'Authorities (Subjects)')
     add_multi(airtable_key, rec, 'Type(s)', headers, 'type')
+    add_multi(airtable_key, rec, 'Coverage (Spatial)', headers, 'coverage_spatial', 'Authorities (Geographic/Locations)')
 
     # XXX: only folders have relations that are of interest for IA
     if 'Item #' not in rec:
         add_multi(airtable_key, rec, 'Relation', headers, 'relation')
 
-    # Date 
+    add_date(rec, headers)
 
-    '''
-    date = rec['Date']
-    if re.match('\d\d\d\d-\d\d\d\d', date):
-        date_string = date
-        year, year_end = date.split('-')
-        
-    --header 'x-archive-meta-year:1957' \
-    --header 'x-archive-meta-year-end:1957' \
-    --header 'x-archive-meta-date:1957' \
-    --header 'x-archive-meta-date-start:1957-11-06T23:23:59Z' \
-    --header 'x-archive-meta-date-end:1957-11-27T23:23:59Z' \
-    --header 'x-archive-meta-date-string:November 1957' \
-
-    --header 'x-archive-meta-year:1952' \
-    --header 'x-archive-meta-year-end:1953' \
-    --header 'x-archive-meta-date:1952-1953' \
-    --header 'x-archive-meta-date-start:1952-01-01T23:23:59Z' \
-    --header 'x-archive-meta-date-end:1953-12-31T23:23:59Z' \
-    --header 'x-archive-meta-date-string:1952-1953' 
-    '''
     return headers
 
 
@@ -226,6 +204,42 @@ def get_config():
         'ia-access-key': ia_access_key,
         'ia-secret-key': ia_secret_key
     }
+
+def add_date(rec, headers={}):
+    date = rec['Date']
+
+    # e.g. 1920-1925
+    m = re.match('^(\d\d\d\d)-(\d\d\d\d)$', date)
+    if m:
+        year_start, year_end = m.groups()
+        headers['x-archive-meta-year'] = year_start
+        headers['x-archive-meta-year-end'] = year_end
+        headers['x-archive-meta-date'] = year_start
+        headers['x-archive-meta-date-string'] = date
+        headers['x-archive-meta-date-start'] = '%s-01-01T00:00:00Z' % year_start
+        headers['x-archive-meta-date-end'] = '%s-12-31T23:59:59Z' % year_end
+
+
+    # e.g. 1920
+    m = re.match('^(\d\d\d\d)$', date)
+    if m:
+        headers['x-archive-meta-year'] = date
+        headers['x-archive-meta-date'] = date
+        headers['x-archive-meta-date-string'] = date
+        headers['x-archive-meta-date-start'] = '%s-01-01T00:00:00Z' % date
+
+
+    # e.g 1932-01-29T23:23:59Z
+    try:
+        dt = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')
+        headers['x-archive-meta-date'] = str(dt.year)
+        headers['x-archive-meta-year'] = str(dt.year)
+        headers['x-archive-meta-date-string'] = dt.strftime('%B %-d, %Y')
+        headers['x-archive-meta-date-start'] = str(date)
+    except:
+        pass
+
+    return headers
 
 if __name__ == "__main__":
     main()
