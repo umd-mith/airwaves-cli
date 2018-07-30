@@ -123,11 +123,11 @@ def get_headers(id, zip_file, rec, config):
         folder_id = rec['Box and Folder #'][0]
         # need to get the linked folder to determine the box and folder
         folder = get_record(airtable_key, 'Contents by Folder with Metadata', folder_id)
-        headers['x-archive-meta-box'] = int(folder['Box'])
-        headers['x-archive-meta-folder'] = int(folder['Folder'])
+        headers['x-archive-meta-box'] = folder['Box']
+        headers['x-archive-meta-folder'] = folder['Folder']
     else:
-        headers['x-archive-meta-box'] = int(rec['Box'])
-        headers['x-archive-meta-folder'] = int(rec['Folder'])
+        headers['x-archive-meta-box'] = rec['Box']
+        headers['x-archive-meta-folder'] = rec['Folder']
 
     # metadata that can take multiple values
     add_multi(airtable_key, rec, 'Publisher', headers, 'publisher', 'Authorities (People & Entities)')

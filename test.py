@@ -38,4 +38,7 @@ def test_get_record():
     headers = get_headers(id, 'test.zip', rec, config)
     assert headers['x-archive-meta-title'] == 'NAEB Newsletter (February 20, 1931)'
     assert headers['x-archive-meta-date-string'] == 'February 20, 1931'
+    for k, v in headers.items():
+        assert type(v) in [unicode, str], '%s was a string or unicode' % k
+    
 
