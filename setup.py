@@ -10,6 +10,6 @@ if __name__ == "__main__":
         packages=['airwaves', ],
         description='Unlocking the Airwaves Utilities',
         python_requires='>=2.7',
-        install_requires=['requests'],
-        entry_points={'console_scripts': ['airwaves = airwaves:main']}
+        install_requires=['requests', 'click'],
+        entry_points={'console_scripts': ['airwaves = airwaves.cli:cli']}
     )

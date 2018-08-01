@@ -1,53 +1,19 @@
 #!/usr/bin/env python
 
-#
-# This program will upload a given folder or item from the Unlocking the 
-# Airwaves AirTable database to the Internet Archive. The files for the folder 
-# or item need to be zipped up. 
-#
-#    ./upload.py --airtable-key abc --ia-access-key def --ia-access-secret ghi naeb-b072-f01 naeb-b072-f01.zip
-#
-# If you would rather not have to repeat the various keys set them in your
-# environment:
-#
-#    export AIRTABLE_KEY="thisisnottherealkey"
-#    export IA_KEY="thisisnteither"
-#    export IA_SECRET="thisdefinitelynotasecret"
-#
-
-import os
 import re
 import sys
 import json
+import click
 import logging
 import datetime
-import optparse
 import requests
-import ConfigParser
+
+from airwaves.config import get_config
 
 AIRTABLE_BASE = 'https://api.airtable.com/v0/appr7YXcZfPKUF4nI/'
 
-
-def main():
-    env = os.environ.get
-    parser = optparse.OptionParser('airwaves <id> <zip_file>')
-    parser.add_option('--verbose', '-v', action='store_true')
-    parser.add_option('--log', default='airwaves.log')
-    opts, args = parser.parse_args()
-
+def main(id, zip_file):
     config = get_config()
-
-    # set up logging
-    logging.basicConfig(
-        filename=opts.log,
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s'
-    )
-
-    if len(args) != 2:
-        parser.error('You must supply an folder/item id and a zip file path')
-
-    id, zip_file = args
 
     # determine the airtable table to query using the id pattern
     if re.match('^naeb-b\d+-f\d+$', id):
@@ -71,7 +37,7 @@ def main():
     if url:
         print("created %s" % url)
     else:
-        print("failed to upload. check %s for details" % opts.log)
+        print("failed to upload. check log for details")
 
 def get_record(key, table, path=None, params=None):
     url = AIRTABLE_BASE + table
@@ -179,31 +145,6 @@ def upload(id, zip_file, headers):
         logging.error('upload failed: %s', e)
         return None
 
-
-def get_config():
-    config_file = os.path.join(os.path.expanduser("~"), ".airwaves")
-    config = ConfigParser.ConfigParser()
-
-    if os.path.isfile(config_file):
-        config.read(config_file)
-        airtable_key = config.get('main', 'airtable-key')
-        ia_access_key = config.get('main', 'ia-access-key')
-        ia_secret_key = config.get('main', 'ia-secret-key')
-    else:
-        airtable_key = raw_input('airtable-key: ')
-        ia_access_key = raw_input('ia-access-key: ')
-        ia_secret_key = raw_input('ia-secret-key: ')
-        config.add_section('main')
-        config.set('main', 'airtable-key', airtable_key)
-        config.set('main', 'ia-access-key', ia_access_key)
-        config.set('main', 'ia-secret-key', ia_secret_key)
-        config.write(open(config_file, 'w'))
-
-    return {
-        'airtable-key': airtable_key,
-        'ia-access-key': ia_access_key,
-        'ia-secret-key': ia_secret_key
-    }
 
 def add_date(rec, headers={}):
     date = rec['Date']

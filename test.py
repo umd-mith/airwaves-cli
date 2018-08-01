@@ -1,6 +1,7 @@
 import pytest
 
-from airwaves.upload import *
+from airwaves.config import get_config
+from airwaves.upload import add_date, get_record, get_headers
 
 def test_timestamp():
     headers = add_date({'Date': '1957-03-03T23:23:59Z'})
