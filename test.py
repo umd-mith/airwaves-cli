@@ -2,6 +2,7 @@ import pytest
 
 from airwaves.config import get_config
 from airwaves.upload import add_date, get_record, get_headers
+from airwaves import aapb
 
 def test_timestamp():
     headers = add_date({'Date': '1957-03-03T23:23:59Z'})
@@ -43,3 +44,13 @@ def test_get_record():
         assert type(v) in [unicode, str], '%s was a string or unicode' % k
     
 
+def test_aapb_records():
+    count = 200
+    for rec in aapb.records():
+        assert rec['id']
+        count += 200
+        if count > 200:
+            break
+
+def test_aapb_transcript():
+    transcript = aapb.get_transcript('cpb-aacip_500-00003k8z')
