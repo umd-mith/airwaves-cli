@@ -14,8 +14,6 @@ def records():
     while True:
         found = False
         resp = requests.get('http://americanarchive.org/api.json', params)
-        import json; print(json.dumps(resp.json(), indent=2))
-        break
         if resp.status_code == 200:
             for rec in resp.json()['response']['docs']:
                 found = True
@@ -31,4 +29,4 @@ def get_transcript(id):
         'http://americanarchive.org/api/{}/transcript'.format(id),
         auth=(config['aapb-username'], config['aapb-password'])
     )
-    print(resp.text)
+    return resp.json()
