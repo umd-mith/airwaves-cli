@@ -27,6 +27,8 @@ def get_config():
         return get_config()
 
 def set_config():
+    config_file = get_config_file()
+    config = ConfigParser.ConfigParser()
     airtable_key = raw_input('airtable-key: ')
     ia_access_key = raw_input('ia-access-key: ')
     ia_secret_key = raw_input('ia-secret-key: ')
