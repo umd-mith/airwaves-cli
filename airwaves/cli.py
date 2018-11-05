@@ -23,3 +23,10 @@ def ids():
 def transcript(id):
     t = aapb.get_transcript(id)
     print(t)
+
+@cli.command()
+def transcripts():
+    for record in aapb.records():
+        t = aapb.get_transcript(record['id'])
+        has_transcript = 'code' not in t
+        print('%s [%s]' % (record['id'], '+' if has_transcript else '-'))
