@@ -1,4 +1,4 @@
-A utility for working with the [Unlocking the Airwaves] project.
+A command line utility for working with the [Unlocking the Airwaves] project.
 
 Download the latest [release], unzip and then:
 
@@ -20,6 +20,3 @@ If you want to see all the NAEB items by searching the [AAPB] website you can:
 [Unlocking the Airwaves]: https://mith.umd.edu/mith-receives-neh-grant-for-unlocking-the-airwaves-revitalizing-an-early-public-and-educational-radio-collection/
 
 [release]: https://github.com/umd-mith/airwaves/releases/
-
-
-
