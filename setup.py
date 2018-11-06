@@ -11,5 +11,7 @@ if __name__ == "__main__":
         description='Unlocking the Airwaves Utilities',
         python_requires='>=2.7',
         install_requires=['requests', 'click'],
+        test_requires=['pytest'],
+        setup_requires=['pytest-runner'],
         entry_points={'console_scripts': ['airwaves = airwaves.cli:cli']}
     )

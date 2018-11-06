@@ -4,3 +4,4 @@ env.sh
 Pipfile*
 airwaves.egg-info
 .pytest_cache/
+.eggs
