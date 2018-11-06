@@ -14,9 +14,9 @@ def upload(id, zip_file):
     airwaves.upload.main(id, zip_file)
 
 @cli.command()
-def ids():
+def items():
     for record in aapb.records():
-        print(record['id'], record['title'])
+        print("{} {}".format(record['id'], record['title']))
 
 @cli.command()
 @click.argument('id')
