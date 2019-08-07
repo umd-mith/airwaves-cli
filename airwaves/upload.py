@@ -8,6 +8,7 @@ import logging
 import datetime
 import requests
 
+from requests.utils import quote
 from airwaves.config import get_config
 
 AIRTABLE_BASE = 'https://api.airtable.com/v0/appr7YXcZfPKUF4nI/'
@@ -40,11 +41,14 @@ def main(id, zip_file):
         print("failed to upload. check log for details")
 
 def get_record(key, table, path=None, params=None):
-    url = AIRTABLE_BASE + table
+    logging.info('getting record from airtable for table=%s path=%s params=%s', 
+            table, path, params)
+    url = AIRTABLE_BASE + quote(table, safe='')
     if path:
-        url += '/' + path
+        url += '/' + quote(path, safe='')
     headers = {'Authorization': 'Bearer %s' % key} 
     data = requests.get(url, headers=headers, params=params).json()
+    logging.info('got record data %s', data)
     if 'records' in data:
         if len(data['records']) != 1:
             sys.exit('error: no such record %s %s %s' % (table, path, params))

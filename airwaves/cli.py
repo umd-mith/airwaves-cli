@@ -1,7 +1,10 @@
 import click
 
 import aapb
+import logging
 import airwaves.upload
+
+logging.basicConfig(filename='airwaves.log', level=logging.INFO)
 
 @click.group()
 def cli():
