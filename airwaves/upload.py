@@ -11,16 +11,16 @@ import requests
 from requests.utils import quote
 from airwaves.config import get_config
 
-AIRTABLE_BASE = 'https://api.airtable.com/v0/appr7YXcZfPKUF4nI/'
+AIRTABLE_BASE = 'https://api.airtable.com/v0/app0oWW3dO3b9gHQo/'
 
 def main(id, zip_file):
     config = get_config()
 
     # determine the airtable table to query using the id pattern
     if re.match('^naeb-b\d+-f\d+$', id):
-        table_name = 'Contents by Folder with Metadata' 
+        table_name = 'Folder Level Metadata' 
     elif re.match('^naeb-b\d+-f\d+-\d+$', id):
-        table_name = 'Contents by Item with Metadata' 
+        table_name = 'Item Level Metadata' 
     else:
         sys.exit("error: invalid id %s" % id)
 
@@ -92,7 +92,7 @@ def get_headers(id, zip_file, rec, config):
             sys.exit('item %s is not linked to a folder' % id)
         folder_id = rec['Box and Folder #'][0]
         # need to get the linked folder to determine the box and folder
-        folder = get_record(airtable_key, 'Contents by Folder with Metadata', folder_id)
+        folder = get_record(airtable_key, 'Folder Level Metadata', folder_id)
         headers['x-archive-meta-box'] = folder['Box']
         headers['x-archive-meta-folder'] = folder['Folder']
     else:

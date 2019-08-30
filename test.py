@@ -32,7 +32,7 @@ def test_get_record():
 
     rec = get_record(
         config['airtable-key'],
-        table='Contents by Item with Metadata',
+        table='Item Level Metadata',
         params={'filterByFormula': '(FIND("%s",{ID}))' % id}
     )
     assert rec['Title'] == 'NAEB Newsletter (February 20, 1931)'
