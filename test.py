@@ -32,7 +32,7 @@ def test_get_record():
 
     rec = get_record(
         config['airtable-key'],
-        table='Item Level Metadata',
+        table='Dublin Core Metadata (Paper-Items)',
         params={'filterByFormula': '(FIND("%s",{ID}))' % id}
     )
     assert rec['Title'] == 'NAEB Newsletter (February 20, 1931)'
@@ -52,5 +52,6 @@ def test_aapb_records():
         if count > 200:
             break
 
-def test_aapb_transcript():
-    transcript = aapb.get_transcript('cpb-aacip_500-00003k8z')
+# disabled 2020-04-19 since AAPB API Basic Auth isn't working
+# def test_aapb_transcript():
+#     transcript = aapb.get_transcript('cpb-aacip_500-00003k8z')

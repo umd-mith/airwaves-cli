@@ -18,9 +18,9 @@ def main(id, zip_file):
 
     # determine the airtable table to query using the id pattern
     if re.match('^naeb-b\d+-f\d+$', id):
-        table_name = 'Folder Level Metadata' 
+        table_name = 'Dublin Core Metadata (Paper-Folders)'
     elif re.match('^naeb-b\d+-f\d+-\d+$', id):
-        table_name = 'Item Level Metadata' 
+        table_name = 'Dublin Core Metadata (Paper-Items)'
     else:
         sys.exit("error: invalid id %s" % id)
 
@@ -92,7 +92,7 @@ def get_headers(id, zip_file, rec, config):
             sys.exit('item %s is not linked to a folder' % id)
         folder_id = rec['Box and Folder #'][0]
         # need to get the linked folder to determine the box and folder
-        folder = get_record(airtable_key, 'Folder Level Metadata', folder_id)
+        folder = get_record(airtable_key, 'Dublin Core Metadata (Paper-Folders)', folder_id)
         headers['x-archive-meta-box'] = folder['Box']
         headers['x-archive-meta-folder'] = folder['Folder']
     else:
@@ -100,9 +100,9 @@ def get_headers(id, zip_file, rec, config):
         headers['x-archive-meta-folder'] = rec['Folder']
 
     # metadata that can take multiple values
-    add_multi(airtable_key, rec, 'Publisher', headers, 'publisher', 'Authorities (People & Entities)')
-    add_multi(airtable_key, rec, 'Creator(s)', headers, 'creator', 'Authorities (People & Entities)')
-    add_multi(airtable_key, rec, 'Contributor(s)', headers, 'contributor', 'Authorities (People & Entities)')
+    add_multi(airtable_key, rec, 'Publisher', headers, 'publisher', 'Authorities (People & Corporate Bodies)')
+    add_multi(airtable_key, rec, 'Creator(s)', headers, 'creator', 'Authorities (People & Corporate Bodies)')
+    add_multi(airtable_key, rec, 'Contributor(s)', headers, 'contributor', 'Authorities (People & Corporate Bodies)')
     add_multi(airtable_key, rec, 'Subject(s)', headers, 'subject', 'Authorities (Subjects)')
     add_multi(airtable_key, rec, 'Type(s)', headers, 'type')
     add_multi(airtable_key, rec, 'Coverage (Spatial)', headers, 'coverage_spatial', 'Authorities (Geographic/Locations)')
