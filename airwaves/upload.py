@@ -17,10 +17,10 @@ def main(id, zip_file):
     config = get_config()
 
     # determine the airtable table to query using the id pattern
-    if re.match(r'^naeb-b.?+-f\d+$', id):
-        table_name = 'Dublin Core Metadata (Paper-Folders)'
-    elif re.match(r'^naeb-b.?+-f\d+-\d+$', id):
+    if re.match(r'^naeb-b.?+-f.+?-\d+$', id):
         table_name = 'Dublin Core Metadata (Paper-Items)'
+    elif re.match(r'^naeb-b.+?-f.+$', id):
+        table_name = 'Dublin Core Metadata (Paper-Folders)'
     else:
         sys.exit("error: invalid id %s" % id)
 
