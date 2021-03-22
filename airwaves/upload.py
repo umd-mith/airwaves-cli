@@ -17,9 +17,9 @@ def main(id, zip_file):
     config = get_config()
 
     # determine the airtable table to query using the id pattern
-    if re.match('^naeb-b\d+-f\d+$', id):
+    if re.match(r'^naeb-b.?+-f\d+$', id):
         table_name = 'Dublin Core Metadata (Paper-Folders)'
-    elif re.match('^naeb-b\d+-f\d+-\d+$', id):
+    elif re.match(r'^naeb-b.?+-f\d+-\d+$', id):
         table_name = 'Dublin Core Metadata (Paper-Items)'
     else:
         sys.exit("error: invalid id %s" % id)
@@ -154,7 +154,7 @@ def add_date(rec, headers={}):
     date = rec['Date']
 
     # e.g. 1920-1925
-    m = re.match('^(\d\d\d\d)-(\d\d\d\d)$', date)
+    m = re.match(r'^(\d\d\d\d)-(\d\d\d\d)$', date)
     if m:
         year_start, year_end = m.groups()
         headers['x-archive-meta-year'] = year_start
@@ -166,7 +166,7 @@ def add_date(rec, headers={}):
 
 
     # e.g. 1920
-    m = re.match('^(\d\d\d\d)$', date)
+    m = re.match(r'^(\d\d\d\d)$', date)
     if m:
         headers['x-archive-meta-year'] = date
         headers['x-archive-meta-date'] = date

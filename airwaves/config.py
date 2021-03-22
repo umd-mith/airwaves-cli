@@ -1,12 +1,16 @@
 import os
-import ConfigParser
+
+try:
+    from ConfigParser import ConfigParser
+except ModuleNotFoundError:
+    from configparser import ConfigParser
 
 def get_config_file():
     return os.path.join(os.path.expanduser("~"), ".airwaves")
 
 def get_config():
     config_file = get_config_file()
-    config = ConfigParser.ConfigParser()
+    config = ConfigParser()
 
     if os.path.isfile(config_file):
         config.read(config_file)
@@ -28,12 +32,12 @@ def get_config():
 
 def set_config():
     config_file = get_config_file()
-    config = ConfigParser.ConfigParser()
-    airtable_key = raw_input('airtable-key: ')
-    ia_access_key = raw_input('ia-access-key: ')
-    ia_secret_key = raw_input('ia-secret-key: ')
-    aapb_username = raw_input('aapb api username: ')
-    aapb_password = raw_input('aapb api passpword: ')
+    config = ConfigParser()
+    airtable_key = input('airtable-key: ')
+    ia_access_key = input('ia-access-key: ')
+    ia_secret_key = input('ia-secret-key: ')
+    aapb_username = input('aapb api username: ')
+    aapb_password = input('aapb api passpword: ')
     config.add_section('main')
     config.set('main', 'airtable-key', airtable_key)
     config.set('main', 'ia-access-key', ia_access_key)

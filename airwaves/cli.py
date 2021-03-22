@@ -1,7 +1,7 @@
 import click
 
-import aapb
 import logging
+import airwaves.aapb
 import airwaves.upload
 
 logging.basicConfig(filename='airwaves.log', level=logging.INFO)
@@ -18,7 +18,7 @@ def upload(id, zip_file):
 
 @cli.command()
 def items():
-    for record in aapb.records():
+    for record in airwaves.aapb.records():
         print("{} {}".format(record['id'], record['title']))
 
 @cli.command()
