@@ -11,16 +11,16 @@ import requests
 from requests.utils import quote
 from airwaves.config import get_config
 
-AIRTABLE_BASE = 'https://api.airtable.com/v0/app0oWW3dO3b9gHQo/'
+AIRTABLE_BASE = 'https://api.airtable.com/v0/appjfPJhxo9IHh8ld/'
 
 def main(id, zip_file):
     config = get_config()
 
     # determine the airtable table to query using the id pattern
     if re.match(r'^naeb-b.?+-f.+?-\d+$', id):
-        table_name = 'Dublin Core Metadata (Paper-Items)'
+        table_name = 'Document Metadata-Items'
     elif re.match(r'^naeb-b.+?-f.+$', id):
-        table_name = 'Dublin Core Metadata (Paper-Folders)'
+        table_name = 'Document Metadata-Folders'
     else:
         sys.exit("error: invalid id %s" % id)
 
@@ -55,6 +55,7 @@ def get_record(key, table, path=None, params=None):
         else:
             return data['records'][0]['fields']
     else:
+        print(data)
         return data['fields']
 
 

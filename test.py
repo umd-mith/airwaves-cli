@@ -1,4 +1,7 @@
 import pytest
+import logging
+
+logging.basicConfig(file='test.log', level=logging.INFO)
 
 from airwaves.config import get_config
 from airwaves.upload import add_date, get_record, get_headers
@@ -32,7 +35,7 @@ def test_get_record():
 
     rec = get_record(
         config['airtable-key'],
-        table='Dublin Core Metadata (Paper-Items)',
+        table='Document Metadata-Items',
         params={'filterByFormula': '(FIND("%s",{ID}))' % id}
     )
     assert rec['Title'] == 'NAEB Newsletter (February 20, 1931)'
